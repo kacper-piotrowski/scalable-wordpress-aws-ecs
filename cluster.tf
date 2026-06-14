@@ -26,7 +26,7 @@ resource "aws_launch_template" "ecs_template" {
 resource "aws_autoscaling_group" "wpasg" {
     name = "wordpress-asg"
     vpc_zone_identifier = [aws_subnet.privsub1.id, aws_subnet.privsub2.id]
-    min_size = var.chosentype == "TEST" ? 1 : 2
+    min_size = 2
     max_size = var.chosentype == "PRODUCTION" ? 6 : 3
     launch_template {
       id = aws_launch_template.ecs_template.id
