@@ -96,3 +96,27 @@ resource "aws_ecs_service" "wp_service" {
       container_port = 80
     }
 }
+
+resource "aws_appautoscaling_target" "ecs_target" {
+    for_each = toset(local.wp_services)
+    max_capacity = 3
+    min_capacity = 1
+    resource_id = "service/${aws_ecs_cluster.wp_cluster.name}/wordpress-service-${each.key}"
+    scalable_dimension = "ecs:service:DesiredCount"
+    service_namespace = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "wp_scaling" {
+    for_each = toset(local.wp_services)
+    name = "wp-scaling-policy-${each.key}"
+    resource_id = aws_appautoscaling_target.ecs_target[each.key].resource_id
+    policy_type = "TargetTrackingScaling"
+    scalable_dimension = "ecs:service:DesiredCount"
+    service_namespace = "ecs"
+    target_tracking_scaling_policy_configuration {
+      target_value = 80.0
+      predefined_metric_specification {
+        predefined_metric_type = "ECSServiceAverageCPUUtilization"
+      }
+    }
+}
