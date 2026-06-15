@@ -1,12 +1,16 @@
 resource "aws_security_group" "lbsg" {
     name = "loadbalancersg"
     vpc_id = aws_vpc.myvpc.id
-    ingress {
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-     }
+    dynamic "ingress" {
+        for_each = [8081, 8082]
+        content {
+          from_port = ingress.value
+          to_port = ingress.value
+          protocol = "tcp"
+          cidr_blocks = ["0.0.0.0/0"]
+        }
+      
+    }
     egress {
         from_port = 0
         to_port = 0
@@ -75,6 +79,12 @@ resource "aws_security_group" "datasg"{
         to_port = 3306
         protocol = "tcp"
         security_groups = [aws_security_group.wpsg.id]
+    }
+    ingress {
+        from_port = 3306
+        to_port = 3306
+        protocol = "tcp"
+        security_groups = [aws_security_group.bastionsg.id]
     }
     ingress {
         from_port = 2049
