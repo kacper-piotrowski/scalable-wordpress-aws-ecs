@@ -10,7 +10,7 @@ resource "aws_db_instance" "mydb" {
     instance_class = "db.t3.micro"
     db_name = "wordpressdb"
     username = "admin"
-    password = "REDACTED_PASSWORD"
+    password = var.db_password
     skip_final_snapshot = true
     multi_az = var.chosentype == "PRODUCTION" ? true : false
     db_subnet_group_name = aws_db_subnet_group.dbsub.name

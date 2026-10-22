@@ -13,7 +13,7 @@ resource "aws_launch_template" "ecs_template" {
     vpc_security_group_ids = [aws_security_group.wpsg.id]
 
     iam_instance_profile {
-        name = "LabInstanceProfile"
+        name = var.iam_instance_profile_name
     }
 
   user_data = base64encode(<<-EOF

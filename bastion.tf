@@ -3,7 +3,7 @@ resource "aws_instance" "bastion" {
     instance_type = "t3.micro"
     subnet_id = aws_subnet.pubsub1.id
     vpc_security_group_ids = [aws_security_group.bastionsg.id]
-    key_name = "vockey"
+    key_name = var.ssh_name
     associate_public_ip_address = true
 	user_data_replace_on_change = true
     tags = {name = "wordpress-bastion"}
